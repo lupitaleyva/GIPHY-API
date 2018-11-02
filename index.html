@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Favorite Movies</title>
+  <style type="text/css">
+    button,
+    div,
+    form,
+    input {
+      margin: 10px;
+    }
+
+    button {
+        background-color:rgb(121, 26, 81);
+        color: white;
+        list-style: none;
+        border: none;
+        padding: 15px 40px;
+        font-size: 18px;
+        border-radius: 12px
+    }
+
+    h1{
+        text-align: center;
+        font-family: sans-serif;
+        color: white;
+    }
+
+    body{
+        background-color: black;
+    }
+
+    #country-form{
+        float: right;
+    }
+
+    #gifs-appear-here{
+        float: left;
+    }
+
+    label{
+        color: white;
+        font-size: 18px;
+        font-family: sans-serif;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <h1>Country Finder</h1>
+
+    <body>
+            <button data-country="mexico">Mexico</button>
+            <button data-country="canada">Canada</button>
+            <button data-country="switzerland">Switzerland</button>
+            <button data-country="germany">Germany</button>
+            <button data-country="france">France</button>
+            <button data-country="italy">Italy</button>
+            <button data-country="spain">Spain</button>
+            <button data-country="neatherlands">Neatherlands</button>
+            <button data-country="denmark">Denmark</button>
+            <button data-country="sweden">Sweden</button>
+            <button data-country="japan">Japan</button>
+            <button data-country="portugal">Portugal</button>
+            <button data-country="poland">Poland</button>
+
+
+            <div id="gifs-appear-here">
+            </div>
+    <div id="buttons-view"></div>
+
+    <form id="country-form">
+      <label for="country-input">Find a Country</label>
+      
+      <input type="text" id="country-input"><br>    
+      <input id="add-country" type="submit" value="Find a Country!">
+    </form>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript">
+
+
+    var apiKey = "1g97uOdDbSbg9VNdE0lOdEC3LMHJgERY";
+     
+    var countries = ["Mexico", "Canada", "Switzerland", "Germany", "France", "Italy", "Spain","Neatherlands","Denmark", "Sweden", "Japan", "Portugal", "Poland"];
+
+    $("#add-country").on("click", function(event) {
+        //don´t refresh
+        event.preventDefault();
+        var buttonCountry = $("<button>");
+        var inputValue = $("#country-input").val();
+        buttonCountry.attr("data-country", inputValue);
+        buttonCountry.text(inputValue);
+        console.log(buttonCountry);
+        console.log(inputValue);
+        countries.push(inputValue);
+
+        $("#buttons-view").append(buttonCountry);
+    });
+        
+     
+     $(document).on("click", "button", function() {
+        var country = $(this).attr("data-country");
+
+    var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + country + "&api_key=" + apiKey + "&limit=10";
+
+
+    
+
+    $.ajax({
+        url: queryURL,
+        method: "GET"
+      })
+        // After data comes back from the request
+        .then(function(response) {
+          console.log(queryURL);
+
+          console.log(response);
+          // storing the data from the AJAX request in the results variable
+          var results = response.data;
+
+          // Looping through each result item
+          for (var i = 0; i < results.length; i++) {
+
+            // Creating and storing a div tag
+            var countryDiv = $("<div>");
+
+            // Creating a paragraph tag with the result item's rating
+            var p = $("<p>").text("Rating: " + results[i].rating);
+
+            // Creating and storing an image tag
+            var countryImage = $("<img>");
+            // Setting the src attribute of the image to a property pulled off the result item
+            countryImage.attr("src", results[i].images.fixed_height.url);
+
+            // Appending the paragraph and image tag to the animalDiv
+            countryDiv.append(p);
+            countryDiv.append(countryImage);
+
+            // Prependng the animalDiv to the HTML page in the "#gifs-appear-here" div
+            $("#gifs-appear-here").prepend(countryDiv);
+
+
+          }
+        });
+    });
+  </script>
+</body>
+</html>
